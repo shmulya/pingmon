@@ -267,10 +267,10 @@
 <div style='width:100%;height:20px;text-align:center'><a href='listedit'>Hosts list editor</a> | <a href='config'>Config</a> | <a href='./'>Graphs</a></div>
 </div>
 </div>
-<div id="popupContact" style="display: none; border: solid 1px black">
+<div id="popupContact" style="height: 50%; width: 60%; display: none; border: solid 1px black">
 <div>
-<div id="container" style="height: 500px; width: 1000px; float: left;"></div>
-<div style="height: 500px; width:250px; float: left; background-color: #FFFFFF;">
+<div id="container" style="height: 90%; width: 60%; float: left;"></div>
+<div style="height: 100%; width:40%; float: left; background-color: #FFFFFF;">
 <div style="position: absolute;top:10px">Start time:<input id="datetimepickerstart" type="text"></div>
 <div style="position: absolute;top:35px">End time: <input id="datetimepickerend" type="text"></div>
 <div style="position: absolute;top:60px"><input id='show' type='button' value='Show'> <button id="popupContactClose">X</button></div>
