@@ -1,3 +1,5 @@
+# pingmon
+
 #First Config
 
 1. Add mysql user and database
@@ -10,4 +12,3 @@
 #Web interface
 
 Open http://ip_from_conf_file:port_from_conf_file/
-# pingmon
