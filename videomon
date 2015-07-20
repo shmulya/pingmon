@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+WORKDIR='/home/shmulya/videomonitoring'
+
+PID=`ps aef | grep '/usr/bin/python' | grep -v grep | awk '{print ($1)}'`
+
+case "$1" in
+    "stop" )
+        echo $PID
+        kill -9 $PID
+        /usr/bin/sudo /bin/umount $WORKDIR/stdout
+        echo "STOOOOOP"
+    ;;
+    "start" )
+        sudo mount -t ramfs -o size=10m ramfs $WORKDIR/stdout
+        sudo chmod 777 $WORKDIR/stdout
+        /usr/bin/python $WORKDIR/watchdog.py& > /dev/null
+        echo "STAAAAART"
+    ;;
+    "restart" )
+        kill -9 $PID
+        /usr/bin/python $WORKDIR/watchdog.py& > /dev/null
+        echo "REEEESTAAAART"
+    ;;
+esac
+
+exit 0

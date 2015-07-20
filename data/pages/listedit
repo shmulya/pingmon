@@ -1,0 +1,105 @@
+<head><title>Host's list editor</title>
+<style>
+#loadImg{position:absolute; z-index:1000; display:none}
+</style>
+<script language="javascript" type="text/javascript" src="./jquery.js"></script>
+<script type="text/javascript">
+            function loadgif() {
+                $("#backdiv").css({
+                    "opacity": "0.5"
+                });
+                centergif();
+                $("#loadimg").fadeIn("slow");
+            }
+            function hidegif() {
+                $("#backdiv").css({
+                    "opacity": "1"
+                });
+                $("#loadimg").fadeOut("slow");
+            }
+            function centergif() {
+                var windowWidth = $('#backdiv').width();
+                var windowHeight = $('#backdiv').height();
+                var popupHeight = $("#imgload").height();
+                var popupWidth = $("#imgload").width();
+                $("#loadimg").css({
+                    "position": "absolute",
+                    "top": windowHeight/2-popupHeight/2,
+                    "left": windowWidth/2-popupWidth/2
+                });
+            }
+            function addel(val) {
+                var resstr = '';
+                var bbut = document.createElement('button');
+                var ddiv = document.createElement('div');
+                ddiv.style.height = '30';
+                ddiv.style.width = '250';
+                ddiv.className = 'cont';
+                var ttext = document.createElement('input');
+                ttext.rows = 1;
+                ttext.className = 'host';
+                ttext.type = 'text';
+                var i = $('.cont').length;
+                if ( i == NaN ) {
+                    var i = 0;
+                }
+                ttext.id = 't'+i;
+                ddiv.id = i;
+                $('#button')[0].style.top = parseInt($('#button')[0].style.top) + 30; 
+                $('#desktop')[0].appendChild(ddiv.cloneNode(true));
+                $('#'+i)[0].appendChild(ttext.cloneNode(true));
+                bbut.className = 'add';
+                bbut.innerHTML = '+';
+                $('#'+i)[0].appendChild(bbut.cloneNode(true));
+                $('.add')[i].onclick = addel;
+                bbut.innerHTML = '-';
+                bbut.className = 'del';
+                $('#'+i)[0].appendChild(bbut.cloneNode(true)); 
+                $('.del')[i].onclick = ddel;
+                if (typeof(val)=='string') {
+                    $('#t'+i)[0].value = val; 
+                }
+            }
+            function ddel() {
+                this.parentElement.parentElement.removeChild(this.parentElement);
+            }
+            $(".document").ready(function() {
+                var ddiv = document.createElement('div');
+                ddiv.style.height = '30';
+                ddiv.style.width = '250';
+                ddiv.id = 'button';
+                ddiv.style.position = 'absolute';
+                $('#desktop')[0].appendChild(ddiv.cloneNode(true));
+                $('#button')[0].innerHTML += '<button class="sndfile">Save</button>';
+                $('#button')[0].style.top = 55;
+                $.post('api', { data: 'hostlistget' }, function (data) {
+                    $.each(data, function (key, val) {
+                        addel(val);                        
+                    });
+                }, 'json');
+                $(".sndfile").click(function() {
+                    var compil = $('.host');
+                    var result = '';
+                    $.each (compil, function( key, val ) {
+                        if (key == compil.length-1) {
+                            result = result + val.value;
+                        }
+                        else {
+                            result = result + val.value + '\n';
+                        }
+                    });
+                    $.post('api', { data: [ 'hostlistsave', result ] }, function() { 
+                        hidegif();
+                    });
+                    loadgif();
+                });
+        
+            });
+</script>
+
+</head>
+<div style='width:100%;height:600px' id='backdiv'>
+<div style='width:100%;height:20px;text-align:center'><a href='listedit'>Hosts list editor</a> | <a href='config'>Config</a> | <a href='./'>Graphs</a></div>
+<img id='loadimg' src='ajax-loader.gif' />
+<div id='desktop' style='height:600px;text-align:left;width:300px'></div>
+</div>

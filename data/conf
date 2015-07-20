@@ -1,0 +1,9 @@
+ipadr = 127.0.0.1
+port = 5080
+debug_lvl = WARN
+logfile = logs/monitor.log
+database = test
+db_login = root
+db_password = yourpas
+logdays = 30
+admin_mails = artemav@yandex-team.ru,human.of.light@gmail.com
