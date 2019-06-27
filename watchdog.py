@@ -3,7 +3,7 @@ import subprocess, time
 tmp = 0
 
 while True:
-    args = ['/usr/bin/python','/home/shmulya/Documents/LiClipse Workspace/videomonitoring/monitor2.py']
+    args = ['/usr/bin/python','monitor2.py']
     if tmp == 0:
         mon = subprocess.Popen(args)
         tmp = 1
