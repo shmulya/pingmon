@@ -1,142 +1,106 @@
-<head>
-<style>
-#loadImg{position:absolute; z-index:1000; display:none}
-</style>
-<script language="javascript" type="text/javascript" src="./jquery.js"></script>
-<script type="text/javascript">
-            function loadgif() {
-                $("#desktop").css({
-                    "opacity": "0.5"
-                });
-                centergif();
-                $("#loadimg").fadeIn("slow");
-            }
-            function hidegif() {
-                $("#desktop").css({
-                    "opacity": "1"
-                });
-                $("#loadimg").fadeOut("slow");
-            }
-            function centergif() {
-                var windowWidth = $('#desktop').width();
-                var windowHeight = $('#desktop').height();
-                var popupHeight = $("#imgload").height();
-                var popupWidth = $("#imgload").width();
-                $("#loadimg").css({
-                    "position": "absolute",
-                    "top": windowHeight/2-popupHeight/2,
-                    "left": windowWidth/2-popupWidth/2
-                });
-            }
-            $(".document").ready(function() {
-                var i = 0;
-                var top = 0;
-                var ttext = document.createElement('input');
-                ttext.type = 'text';
-                var ddiv = document.createElement('div');
-                ddiv.style.width = '100';
-                ddiv.style.height = '20';
-                ddiv.style.position = 'absolute';
-                ddiv.style.textAlign = 'right';
-                $('#desktop')[0].innerHTML += "<div style='position:absolute;width:100px;height:20px;text-align:center;top:300px'><button class='save'>Save</button> <button class='add'>+</button><button class='del'>-</button></div>";
-                $.post('api', { data: ["config"] }, function ( data ) {
-                    $.each( data, function ( key, val ) {
-                        ddiv.id = i;
-                        ddiv.className = '';
-                        top = top + 25;
-                        ddiv.style.top = top;
-                        ttext.id = i+'t';
-                        ttext.cols = '20';
-                        if (val[1].length>20) {
-                            ttext.cols = val[1].length;
-                        }
-                        $('#desktop')[0].appendChild(ddiv.cloneNode(true));
-                        ddiv.style.left = '110';
-                        ddiv.className = 'tx';
-                        ddiv.id = 't'+i;
-                        if (val[0] == 'admin_mails') {
-                            ddiv.id = 'mails';
-                            $('#desktop')[0].appendChild(ddiv.cloneNode(true));
-                            $.each(val[1], function ( key, val) {
-                                ttext.id = '';
-                                ttext.className = 'm';
-                                if (val.length>20) {
-                                    ttext.cols = val.length;
-                                }
-                                else {
-                                    ttext.cols = '20';
-                                }
-                                $('#mails')[0].appendChild(ttext.cloneNode(true));
-                                $('.m')[key].value = val;
-                            });
-                        }
-                        else if (val[0] == 'db_password') {
-                            ttext.type = 'password';
-                            $('#desktop')[0].appendChild(ddiv.cloneNode(true));
-                            ttext.className = 't';
-                            $('#t'+i)[0].appendChild(ttext.cloneNode(true));
-                            $('.t')[key].value = val[1];
-                            ttext.type = 'text';
-                        }
-                        else {
-                            $('#desktop')[0].appendChild(ddiv.cloneNode(true));
-                            ttext.className = 't';
-                            $('#t'+i)[0].appendChild(ttext.cloneNode(true));
-                            $('.t')[key].value = val[1];
-                        }
-                        ddiv.style.left = '';
-                        document.getElementById(i).innerHTML = val[0]+':';
-                        
-                        i++;
-                    });
-                    $(".add").click(function() {
-                        var ttext = document.createElement('input');
-                        ttext.type = 'text';
-                        ttext.cols = '20';
-                        document.getElementById('mails').appendChild(ttext.cloneNode(true));
-                    });
-                    $(".del").click(function () {
-                        dv = $('#mails')[0];
-                        dv.removeChild(dv.lastChild);
-                    });
-                    $(".save").click(function() {
-                        var k = 0;
-                        var str = '';
-                        txa = $('.tx');
-                        $.each ( txa, function ( ind, txav ) {
-                            if (document.getElementById(k).innerHTML == 'admin_mails:') {
-                                str += document.getElementById(k).innerHTML;
-                                var j = 1
-                                $.each (txav.childNodes, function (indtx, txmail) {
-                                    if (j == txav.childNodes.length) {
-                                        str += txmail.value;
-                                    }
-                                    else {
-                                        str += txmail.value+',';
-                                    }
-                                    j ++;
-                                });
-                            }
-                            if (k == txa.length-1) {
-                                if (document.getElementById(k).innerHTML != 'admin_mails:') {
-                                    str += document.getElementById(k).innerHTML + txav.lastChild.value;
-                                }
-                            }
-                            else {
-                                str += document.getElementById(k).innerHTML + txav.lastChild.value + ';';
-                            }
-                            k ++;
-                        });
-                        $.post('api', { data: ["config", str] });
-                        loadgif();
-                        setTimeout(hidegif,3000);
-                    });
-                });
-            });
-</script>
+<!DOCTYPE html> 
+<html>
 
+<head>
+  <title>Videomonitoring Web Interface</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <!-- modernizr enables HTML5 elements and feature detects -->
+  <script type="text/javascript" src="modernizr-1.5.min.js"></script>
+  <script type="text/javascript" src="angular.min.js"></script>
+  <script type="text/javascript">
+    var app = angular.module('myApp',[]);
+    app.controller('contCtrl', function($scope, $http) {
+        function getlist() {
+            $http.get('configet')
+            .then(function(response) {
+                $scope.config = response.data;
+            });
+        }
+        $scope.add = function() {
+            $scope.config.admin_mails.push('');
+        }
+        $scope.delete = function(mail) {
+            var index = $scope.config.admin_mails.indexOf(name);
+            $scope.config.admin_mails.splice(index, 1);   
+        }
+        $scope.save = function() {
+             $http.post('updateconfig',$scope.config)
+        }
+        getlist();
+        
+    });
+        
+  
+  </script>
+  
 </head>
-<div style='width:100%;height:600px' id='desktop'>
-<div style='width:100%;height:20px;text-align:center'><a href='listedit'>Hosts list editor</a> | <a href='config'>Config</a> | <a href='./'>Graphs</a></div>
-<img id='loadimg' src='ajax-loader.gif' />
-</div>
+
+<body>
+  <div id="main">
+    <header>
+      <div id="banner">
+        <div id="welcome">
+          <h3>Videomonitoring Web-interface<span>Blue</span></h3>
+        </div><!--close welcome-->
+        <div id="welcome_slogan">
+          <h3>divide and rool</h3>
+        </div><!--close welcome_slogan-->           
+      </div><!--close banner-->
+    </header>
+
+    <nav>
+      <div id="menubar">
+        <ul id="nav">
+          <li><a href="/">VCS availablity</a></li>
+          <li><a>iPad</a></li>
+          <li><a href="listeditor">VCS list</a></li>
+          <li class="current"><a href="config">Configure</a></li>
+        </ul>
+      </div><!--close menubar-->    
+    </nav>  
+    
+    <div id="site_content" ng-app="myApp" ng-controller="contCtrl">         
+      <div id="content">
+        <div class="content_item">
+            <h1>Configuration</h1>
+            <div style="width: 100px;"><span>Server IP: </span></div><input id="host" size="15" ng-model="config.ipadr">
+        </div>
+        <div class="content_item">
+            <div style="width: 120px;"><span>Web Interface port: </span></div><input id="host" size="15" ng-model="config.port">
+        </div>
+        <div class="content_item">
+            <div style="width: 100px;"><span>Logfile: </span></div><input id="host" size="15" ng-model="config.logfile">
+        </div>
+        <div class="content_item">
+            <div style="width: 100px;"><span>Database: </span></div><input id="host" size="15" ng-model="config.database">
+        </div>
+        <div class="content_item">
+            <div style="width: 100px;"><span>DB username: </span></div><input id="host" size="15" ng-model="config.db_login">
+        </div>
+        <div class="content_item">
+            <div style="width: 100px;"><span>DB password: </span></div><input type="password" id="host" size="15" ng-model="config.db_password">
+        </div>
+        <div class="content_item">
+            <div style="width: 100px;"><span>E-mails: </span></div>
+            <div style="margin: 0 0 5px 0;" ng-repeat="mail in config.admin_mails track by $index">
+                <input id="host" ng-model="config.admin_mails[$index]" size="25">
+                <a class='btn btn-success btn-sm' ng-click="delete(mail)">-</a>
+            </div>
+            <a class='btn btn-success btn-sm' ng-click="add()">+</a>
+        </div>
+        <div class="content_item">
+            <a class='btn btn-success btn-sm' ng-click="save()">Save Config</a>
+        </div>
+      </div><!--close content-->   
+    </div><!--close site_content-->     
+  </div><!--close main-->
+  
+    <footer>
+      Website template by <a href="http://www.freehtml5templates.co.uk">Free HTML5 Templates</a>
+    </footer>
+
+  <!-- javascript at the bottom for fast page loading -->
+  <script type="text/javascript" src="jquery.js"></script>
+  
+</body>
+</html>
