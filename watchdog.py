@@ -3,7 +3,7 @@ import subprocess, time
 tmp = 0
 
 while True:
-    args = ['/usr/bin/python','/home/shmulya/videomonitoring/monitor.py']
+    args = ['/usr/bin/python','/home/shmulya/Documents/LiClipse Workspace/videomonitoring/monitor2.py']
     if tmp == 0:
         mon = subprocess.Popen(args)
         tmp = 1
@@ -11,7 +11,7 @@ while True:
         if open('./data/tr','r').read() == '1':
             mon.terminate()
             print 'stoped'
-            time.sleep(2)
+            time.sleep(3)
             mon = subprocess.Popen(args)
             print 'started'
             open('./data/tr','w').write('0')
